@@ -19,9 +19,12 @@ class BracketController extends Controller
         ];
     }
     public function bracket_control(Request $request){
-        $this->second_senario($request->brackets);
-        $first_senario = $this->first_senario($request->brackets);
-        $second_senario = $this->second_senario($request->brackets);
+ 
+        $first_senario = $this->first_senario(preg_replace('/\s+/', '', $request->brackets));
+        $second_senario = $this->second_senario(preg_replace('/\s+/', '', $request->brackets));
+ 
+          
+ 
         if($first_senario || $second_senario){
             Session::flash('success',"Diziliş Doğru");
             return view("bracket")->with('success',"Diziliş doğru");
@@ -66,9 +69,10 @@ class BracketController extends Controller
             }
         }
         }
-        if(in_array("Yanlış", $sonuc_array)){
+        if(in_array("Yanlış", $sonuc_array)){  
             return false;
         }else{
+        
             return true;
         }
     }
@@ -76,12 +80,12 @@ class BracketController extends Controller
 
 
     private function second_senario($string){
-        $array = str_split(str_replace(" ","",$string));
+        $array = str_split($string);
+         
         $is_even = $this->array_even_or_odd($string);
         $sonuc_array = [];
         if(!$is_even){
             array_push($sonuc_array,"Yanlış");
-            
             return false;
         }
         $string = mb_substr($string,1,-1);
@@ -90,9 +94,9 @@ class BracketController extends Controller
  
         for($i = 0; $i < count($array); $i++){
             if (isset($this->brackets[$array[$i]])) {
-                if(  $this->brackets[$array[$i]] == $array[$i+1]){
+                if($this->brackets[$array[$i]] == $array[$i+1]){
                    return true;
-                }else{
+                }else{  
                     return false;
                 }
             } 
